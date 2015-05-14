@@ -83,7 +83,8 @@ assignment so you do not have to download the data separately.
 ### Loading and preprocessing the data
 
 1. Download and upack the data if it does not exist yet.
-```{r, echo=TRUE}
+
+```r
 setwd("/Users/gmakarenkov/Coursera/test-repo-gm/repdata-014/PA01")
 if(!file.exists("./data")){dir.create("./data")}
 if(!file.exists("./data/activity.csv"))
@@ -96,21 +97,23 @@ if(!file.exists("./data/activity.csv"))
 ```
 
 2. Load the data (i.e. `read.csv()`)
-```{r, echo=TRUE}
 
+```r
 StepsData <- read.csv("./data/activity.csv")
 ```
 3. Process/transform the data (if necessary) into a format suitable for your analysis  
 
 *I have changed interval ids ranging from 0 to 2355 to continuous 5-minutes time slots ranging from 0 to 288 - number of 5 minutes slots in 24 hours: 288=60x24/5. This allows to avoid gaps in interval ids from 55 to 100, 155 to 200 and so on.. This in turn makes the shape of the average steps plots correct.*
 
-```{r, echo=TRUE}
+
+```r
         StepsData$interval <- (floor(StepsData$interval/100)*60 + 
                                 (StepsData$interval - floor(StepsData$interval/100)*100))/5
 ```
 
 *And also I have changed format of the date column from "char" to "POSIXct"*
-```{r, echo=TRUE}
+
+```r
         library(lubridate)
         StepsData$date <- ymd(StepsData$date)
 ```
@@ -122,18 +125,32 @@ the dataset.
 
 1. Make a histogram of the total number of steps taken each day
 
-```{r, echo=TRUE}
-        
+
+```r
         StepsPerDay <- aggregate(steps ~ date, StepsData, FUN = "sum", na.action = na.omit)
         hist(StepsPerDay$steps, col = "blue", 
                 main = "Total number of steps taken each day", xlab = "steps",  breaks = 20)
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+
 2. Calculate and report the **mean** and **median** total number of steps taken per day
 
-```{r, echo=TRUE}
+
+```r
         mean(StepsPerDay$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
         median(StepsPerDay$steps)
+```
+
+```
+## [1] 10765
 ```
 
 ### What is the average daily activity pattern?
@@ -142,12 +159,15 @@ the dataset.
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r, echo=TRUE}
+
+```r
         AvgStepsPerInt <- aggregate(steps ~ interval, StepsData, FUN = "mean", na.action = na.omit)
         plot(AvgStepsPerInt$interval, AvgStepsPerInt$steps, type = "l", 
              ylab = "steps", xlab = "5-minute interval",
              main = "Average number of steps taken, averaged across all day")
 ```
+
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
   
 ### Imputing missing values
 
@@ -156,18 +176,33 @@ values (coded as `NA`). The presence of missing days may introduce
 bias into some calculations or summaries of the data.
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
-```{r, echo=TRUE}
+
+```r
         sum(is.na(StepsData))
 ```
 
+```
+## [1] 2304
+```
+
 *out of*
-```{r, echo=TRUE}
+
+```r
 dim(StepsData)[1]
 ```
 
+```
+## [1] 17568
+```
+
 *rows, which represent (%)*
-```{r, echo=TRUE}
+
+```r
 round(sum(is.na(StepsData))/dim(StepsData)[1]*100,2)
+```
+
+```
+## [1] 13.11
 ```
 *This is quite high number of NA's that can impact the analysis.*
 
@@ -176,7 +211,8 @@ round(sum(is.na(StepsData))/dim(StepsData)[1]*100,2)
 *The strategy that I have used is **Average number of steps per interval across all days** assuming that at any given moment during the day people take approximately same number of steps*
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
-```{r, echo=TRUE}
+
+```r
         x <- merge(StepsData,AvgStepsPerInt,by="interval",all.x=TRUE)
         x[is.na(x$steps.x), ]$steps.x <- x[is.na(x$steps.x), ]$steps.y
         x$steps.y <- NULL
@@ -184,13 +220,40 @@ round(sum(is.na(StepsData))/dim(StepsData)[1]*100,2)
         head(x)
 ```
 
+```
+##   interval    steps       date
+## 1        0 1.716981 2012-10-01
+## 2        0 0.000000 2012-11-23
+## 3        0 0.000000 2012-10-28
+## 4        0 0.000000 2012-11-06
+## 5        0 0.000000 2012-11-24
+## 6        0 0.000000 2012-11-15
+```
+
 4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
-```{r, echo=TRUE}
+
+```r
         StepsPerDay <- aggregate(steps ~ date, x, FUN = "sum", na.action = na.omit)
         hist(StepsPerDay$steps, col = "red", 
              main = "Total number of steps taken each day", xlab = "steps", breaks = 20)
+```
+
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png) 
+
+```r
         mean(StepsPerDay$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
         median(StepsPerDay$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 *This is quite close to the original mean and median calculated with omitted NA's meaning that even I imputed missing values it did not change the data set much. And this is a good thing.*
@@ -202,8 +265,8 @@ the dataset with the filled-in missing values for this part.
 
 1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-```{r, echo=TRUE}
 
+```r
         x<- cbind(x, weekdays(x$date))
         colnames(x)[4] <- "weekday"
         x$weekday <- gsub("Saturday|Sunday", "Weekend", as.character(x$weekday))
@@ -213,7 +276,8 @@ the dataset with the filled-in missing values for this part.
 
 2. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
-```{r, echo=TRUE}
+
+```r
         library(ggplot2)
 
         AvgStepsPerIntByWeekday <- aggregate(steps ~ interval + weekday, x, FUN = "mean")
@@ -225,9 +289,12 @@ the dataset with the filled-in missing values for this part.
                 labs(title = "Differences in activity patterns between weekdays and weekends")
 ```
 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png) 
+
 *By looking at the plot you can tell that during workdays people tend to walk more in the mornings and less during the rest of the day. On the contrary on weekends people walk less in the mornings and more during the rest of the day.*
 
 *Delete data folder*
-```{r, echo=TRUE}
+
+```r
 unlink("./data", recursive = TRUE)
 ```
