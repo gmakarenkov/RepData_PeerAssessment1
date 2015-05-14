@@ -85,14 +85,6 @@ assignment so you do not have to download the data separately.
 1. Download and upack the data if it does not exist yet.
 
 ```r
-setwd("/Users/gmakarenkov/Coursera/test-repo-gm/repdata-014/PA01")
-```
-
-```
-## Error in setwd("/Users/gmakarenkov/Coursera/test-repo-gm/repdata-014/PA01"): cannot change working directory
-```
-
-```r
 if(!file.exists("./data")){dir.create("./data")}
 if(!file.exists("./data/activity.csv"))
         {
@@ -164,8 +156,6 @@ the dataset.
 
 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-
 
 ```r
         AvgStepsPerInt <- aggregate(steps ~ interval, StepsData, FUN = "mean", na.action = na.omit)
@@ -176,6 +166,17 @@ the dataset.
 
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
   
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+
+```r
+        AvgStepsPerInt[AvgStepsPerInt$steps == max(AvgStepsPerInt$steps), 1]
+```
+
+```
+## [1] 103
+```
+
 ### Imputing missing values
 
 Note that there are a number of days/intervals where there are missing
@@ -245,7 +246,7 @@ round(sum(is.na(StepsData))/dim(StepsData)[1]*100,2)
              main = "Total number of steps taken each day", xlab = "steps", breaks = 20)
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
 
 ```r
         mean(StepsPerDay$steps)
@@ -296,7 +297,7 @@ the dataset with the filled-in missing values for this part.
                 labs(title = "Differences in activity patterns between weekdays and weekends")
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png) 
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png) 
 
 *By looking at the plot you can tell that during workdays people tend to walk more in the mornings and less during the rest of the day. On the contrary on weekends people walk less in the mornings and more during the rest of the day.*
 

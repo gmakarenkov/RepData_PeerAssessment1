@@ -84,7 +84,6 @@ assignment so you do not have to download the data separately.
 
 1. Download and upack the data if it does not exist yet.
 ```{r, echo=TRUE}
-setwd("/Users/gmakarenkov/Coursera/test-repo-gm/repdata-014/PA01")
 if(!file.exists("./data")){dir.create("./data")}
 if(!file.exists("./data/activity.csv"))
         {
@@ -140,8 +139,6 @@ the dataset.
 
 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-
 ```{r, echo=TRUE}
         AvgStepsPerInt <- aggregate(steps ~ interval, StepsData, FUN = "mean", na.action = na.omit)
         plot(AvgStepsPerInt$interval, AvgStepsPerInt$steps, type = "l", 
@@ -149,6 +146,12 @@ the dataset.
              main = "Average number of steps taken, averaged across all day")
 ```
   
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```{r, echo=TRUE}
+        AvgStepsPerInt[AvgStepsPerInt$steps == max(AvgStepsPerInt$steps), 1]
+```
+
 ### Imputing missing values
 
 Note that there are a number of days/intervals where there are missing
