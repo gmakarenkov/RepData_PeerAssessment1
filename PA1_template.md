@@ -86,6 +86,13 @@ assignment so you do not have to download the data separately.
 
 ```r
 setwd("/Users/gmakarenkov/Coursera/test-repo-gm/repdata-014/PA01")
+```
+
+```
+## Error in setwd("/Users/gmakarenkov/Coursera/test-repo-gm/repdata-014/PA01"): cannot change working directory
+```
+
+```r
 if(!file.exists("./data")){dir.create("./data")}
 if(!file.exists("./data/activity.csv"))
         {

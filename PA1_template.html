@@ -282,7 +282,12 @@ assignment so you do not have to download the data separately.</p>
 </ol>
 
 <pre><code class="r">setwd(&quot;/Users/gmakarenkov/Coursera/test-repo-gm/repdata-014/PA01&quot;)
-if(!file.exists(&quot;./data&quot;)){dir.create(&quot;./data&quot;)}
+</code></pre>
+
+<pre><code>## Error in setwd(&quot;/Users/gmakarenkov/Coursera/test-repo-gm/repdata-014/PA01&quot;): cannot change working directory
+</code></pre>
+
+<pre><code class="r">if(!file.exists(&quot;./data&quot;)){dir.create(&quot;./data&quot;)}
 if(!file.exists(&quot;./data/activity.csv&quot;))
         {
         fileUrl &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip&quot;
